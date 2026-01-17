@@ -10,12 +10,27 @@ import CoreData
 
 @main
 struct LEGOScannerApp: App {
-    let persistenceController = PersistenceController.shared
-
+    let persistenceController = CoreDataManager.shared
+    init() {
+        // Configure appearance
+        configureAppearance()
+    }
     var body: some Scene {
         WindowGroup {
-            ContentView()
-                .environment(\.managedObjectContext, persistenceController.container.viewContext)
+            HomeView()
+                .environment(\.managedObjectContext, persistenceController.context)
         }
+    }
+    private func configureAppearance() {
+        // Navigation bar appearance
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = UIColor.systemRed
+        appearance.titleTextAttributes = [.foregroundColor: UIColor.white]
+        appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
+        UINavigationBar.appearance().standardAppearance = appearance
+        UINavigationBar.appearance().compactAppearance = appearance
+        UINavigationBar.appearance().scrollEdgeAppearance = appearance
+        UINavigationBar.appearance().tintColor = .white
     }
 }
