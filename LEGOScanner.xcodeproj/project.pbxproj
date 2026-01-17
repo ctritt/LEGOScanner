@@ -16,6 +16,11 @@
 			path = LEGOScanner;
 			sourceTree = "<group>";
 		};
+		C9F689222F15486000166255 /* LEGOScannerTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = LEGOScannerTests;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -34,6 +39,7 @@
 			children = (
 				C9F6890A2F1547A400166255 /* LEGOScanner */,
 				C9F689092F1547A400166255 /* Products */,
+				C9F689222F15486000166255 /* LEGOScannerTests */,
 			);
 			sourceTree = "<group>";
 		};
@@ -62,6 +68,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				C9F6890A2F1547A400166255 /* LEGOScanner */,
+				C9F689222F15486000166255 /* LEGOScannerTests */,
 			);
 			name = LEGOScanner;
 			packageProductDependencies = (
