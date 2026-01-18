@@ -7,9 +7,9 @@
 
 import AVFoundation
 import UIKit
+import Combine
 
 class CameraService: NSObject, ObservableObject {
-    
     @Published var capturedImage: UIImage?
     @Published var isAuthorized = false
     @Published var showAlert = false
@@ -27,53 +27,50 @@ class CameraService: NSObject, ObservableObject {
     }
     
     func checkAuthorization() {
+        
         switch AVCaptureDevice.authorizationStatus(for: .video) {
-            case .authorized:
-                isAuthorized = true
-                setupCamera()
-            case .notDetermined:
-                requestAuthorization()
-            case .denied, .restricted:
-                isAuthorized = false
-                alertMessage = "Camera access is required to scan LEGO pieces"
-                showAlert = true
+        case .authorized:
+            isAuthorized = true
+            setupCamera()
+        case .notDetermined:
+            requestAuthorization()
+        case .denied, .restricted:
+            isAuthorized = false
+            alertMessage = "Camera access is required to scan LEGO pieces"
+            showAlert = true
         @unknown default:
             break
         }
     }
     
     private func requestAuthorization() {
-        AVCaptureDevice.requestAccess(for: .video) {[weak self] granted in
-            DispatchQueue.main.async {
-                self?.isAuthorized = granted
-                if granted {
-                    self?.setupCamera()
-                } else {
-                    self?.alertMessage = "Camera access is required to scan LEGO pieces"
-                    self?.showAlert = true
-                }
+        AVCaptureDevice.requestAccess(for: .video) { [weak self] granted in            DispatchQueue.main.async {
+            self?.isAuthorized = granted
+            if granted {
+                self?.setupCamera()
+            } else {
+                self?.alertMessage = "Camera access is required to scan LEGO pieces"
+                self?.showAlert = true
             }
+        }
         }
     }
     
     private func setupCamera() {
-        sessionQueue.async {[weak self] in
+        sessionQueue.async { [weak self] in
             guard let self = self else { return }
-            
             self.session.beginConfiguration()
             self.session.sessionPreset = .photo
             
             // Add video input
-            guard let videoDevice = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back),                  let videoDeviceInput = try? AVCaptureDeviceInput(device: videoDevice),                  self.session.canAddInput(videoDeviceInput) else {
-                return
+            guard let videoDevice = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back),
+                  let videoDeviceInput = try? AVCaptureDeviceInput(device: videoDevice),                  self.session.canAddInput(videoDeviceInput) else {                return
             }
-            
             self.session.addInput(videoDeviceInput)
             self.videoDeviceInput = videoDeviceInput
             
             // Add photo output
-            if self.session.canAddOutput(self.photoOutput) {
-                self.session.addOutput(self.photoOutput)
+            if self.session.canAddOutput(self.photoOutput) {                self.session.addOutput(self.photoOutput)
                 self.photoOutput.isHighResolutionCaptureEnabled = true
             }
             self.session.commitConfiguration()
@@ -88,7 +85,7 @@ class CameraService: NSObject, ObservableObject {
     }
     
     func stopSession() {
-        sessionQueue.async {[weak self] in
+        sessionQueue.async { [weak self] in
             guard let self = self, self.session.isRunning else { return }
             self.session.stopRunning()
         }
@@ -100,7 +97,7 @@ class CameraService: NSObject, ObservableObject {
         photoOutput.capturePhoto(with: settings, delegate: self)
     }
     
-    func saveImageToDocuments(_ image: UIImage) -> String? {
+    func saveImageToDocuments(image: UIImage) -> String? {
         guard let data = image.jpegData(compressionQuality: 0.8) else { return nil }
         let filename = UUID().uuidString + ".jpg"
         let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
@@ -109,12 +106,12 @@ class CameraService: NSObject, ObservableObject {
             try data.write(to: fileURL)
             return filename
         } catch {
-            print("Error saving file with name \(filename): \(error)")
+            print("Error saving image: \(error)")
             return nil
         }
     }
     
-    func loadImageFromDocuments(_ filename: String) -> UIImage? {
+    func loadImageFromDocuments(filename: String) -> UIImage? {
         let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
         let fileURL = documentsDirectory.appendingPathComponent(filename)
         guard let data = try? Data(contentsOf: fileURL) else { return nil }
@@ -129,12 +126,10 @@ extension CameraService: AVCapturePhotoCaptureDelegate {
             print("Error capturing photo: \(error)")
             return
         }
-        
         guard let imageData = photo.fileDataRepresentation(),
               let image = UIImage(data: imageData) else {
             return
         }
-        
         DispatchQueue.main.async {
             self.capturedImage = image
         }

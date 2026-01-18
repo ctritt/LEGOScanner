@@ -20,7 +20,7 @@ struct PieceCard: View {
             HStack(spacing: 12) {
                 // Image
                 if let imagePath = piece.imagePath,
-                   let image = CameraService().loadImageFromDocuments(imagePath) {
+                   let image = CameraService().loadImageFromDocuments(filename: imagePath) {
                     Image(uiImage: image)
                         .resizable()
                         .aspectRatio(contentMode: .fill)

@@ -18,7 +18,7 @@ struct PieceDetailView: View {
                 VStack(spacing: 24) {
                     // Image
                     if let imagePath = piece.imagePath,
-                       let image = CameraService().loadImageFromDocuments(imagePath) {                        Image(uiImage: image)
+                       let image = CameraService().loadImageFromDocuments(filename: imagePath) {                        Image(uiImage: image)
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .frame(maxHeight: 300)

@@ -51,7 +51,7 @@ class CameraViewModel: ObservableObject {
             // Save image
             var imagePath: String?
             if let croppedImage = piece.croppedImage {
-                imagePath = cameraService.saveImageToDocuments(croppedImage)
+                imagePath = cameraService.saveImageToDocuments(image: croppedImage)
             }
             
             CoreDataManager.shared.savePiece(

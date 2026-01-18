@@ -22,7 +22,7 @@ extension LegoPiece {
         piece.imagePath = imagePath
         piece.category = category
         piece.location = location
-        piece.confidence = confidence
+        piece.confidence = confidence ?? 0
         piece.dateAdded = Date()
         return piece
     }
