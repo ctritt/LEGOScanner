@@ -11,7 +11,7 @@ class RebrickableAPI {
     static let shared = RebrickableAPI()
     
     private let baseURL = "https://rebrickable.com/api/v3"
-    private let apiKey = "YOUR_REBRICKABLE_API_KEY" // Get from rebrickable.com
+    private let apiKey = "f361e153b4e87573fb4121ce6bf9fe38" // Get from rebrickable.com
     
     private init() {}
     
